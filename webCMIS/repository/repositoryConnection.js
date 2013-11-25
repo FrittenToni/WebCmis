@@ -33,51 +33,103 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
 
     /** REPOSITORY SERVICES **/
     /**
-     *
+     * @param {object} params
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    RepositoryConnection.prototype.getRepositories = function (doneCb, failCb) {
-        this.getRepositoryService().getRepositories(doneCb, failCb);
+    RepositoryConnection.prototype.getRepositories = function (params, doneCb, failCb) {
+        assert.assertObject(params);
+        this.getRepositoryService().getRepositories(params.token, doneCb, failCb);
     };
     /**
-     *
+     * @param {object} params
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    RepositoryConnection.prototype.getRepositoryInfo = function (doneCb, failCb) {
-        this.getRepositoryService().getRepositoryInfo(doneCb, failCb);
+    RepositoryConnection.prototype.getRepositoryInfo = function (params, doneCb, failCb) {
+        assert.assertObject(params);
+        this.getRepositoryService().getRepositoryInfo(params.token, doneCb, failCb);
     };
     /**
-     *
+     * @param {object} params
+     * @param {string} params.typeId
+     * @param {string} [params.includePropertyDefinitions]
+     * @param {string} [params.maxItems]
+     * @param {string} [params.skipCount]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeChildren = function (params, doneCb, failCb) {
         assert.assertObject(params);
         var maxItems = params.maxItems || this.getOperationContext().getMaxItems();
-
-        this.getRepositoryService().getTypeChildren(params.typeId, params.includePropertyDefinitions, maxItems, params.skipCount, doneCb, failCb);
+        // TODO: defaults for includePropertyDefinitions and skipCount
+        this.getRepositoryService().getTypeChildren(params.typeId, params.includePropertyDefinitions, maxItems, params.skipCount, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.typeId
+     * @param {string} [params.depth]
+     * @param {string} [params.includePropertyDefinitions]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeDescendants = function (params, doneCb, failCb) {
         assert.assertObject(params);
-        this.getRepositoryService().getTypeDescendants(params.typeId, params.depth, params.includePropertyDefinitions, doneCb, failCb);
+        // TODO: defaults for includePropertyDefinitions and depth
+        this.getRepositoryService().getTypeDescendants(params.typeId, params.depth, params.includePropertyDefinitions, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.typeId
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeDefinition = function (params, doneCb, failCb) {
         assert.assertObject(params);
-        this.getRepositoryService().getTypeDefinition(params.typeId, doneCb, failCb);
+        this.getRepositoryService().getTypeDefinition(params.typeId, params.token, doneCb, failCb);
+    };
+    /**
+     *
+     * @param {object} params
+     * @param {webCmis.models.CmisTypeDefinition} params.cmisTypeDefinition
+     * @param {string} [params.token]
+     * @param {function} [doneCb]
+     * @param {function} [failCb]
+     */
+    RepositoryConnection.prototype.createType = function (params, doneCb, failCb) {
+        assert.assertObject(params);
+        this.getRepositoryService().createType(params.cmisTypeDefinition, params.token, doneCb, failCb);
+    };
+    /**
+     *
+     * @param {object} params
+     * @param {webCmis.models.CmisTypeDefinition} params.cmisTypeDefinition
+     * @param {string} [params.token]
+     * @param {function} [doneCb]
+     * @param {function} [failCb]
+     */
+    RepositoryConnection.prototype.updateType = function (params, doneCb, failCb) {
+        assert.assertObject(params);
+        this.getRepositoryService().updateType(params.cmisTypeDefinition, params.token, doneCb, failCb);
+    };
+    /**
+     *
+     * @param {object} params
+     * @param {string} params.typeId
+     * @param {string} [params.token]
+     * @param {function} [doneCb]
+     * @param {function} [failCb]
+     */
+    RepositoryConnection.prototype.deleteType = function (params, doneCb, failCb) {
+        assert.assertObject(params);
+        this.getRepositoryService().deleteType(params.typeId, params.token, doneCb, failCb);
     };
 
     /** NAVIGATION SERVICES **/

@@ -8,7 +8,7 @@ webCmis.util.request = (function (logger) {
 //            beforeSend: function() {
 //                xhr.setRequestHeader("Authority", authorizationToken);
 //            },
-            dataType: 'jsonp',
+            dataType: 'json',
             data: data
         }).done(function (result, textStatus, jqXHR) {
                 logger.debug('Ajax call was successful. URL: ' + url + ' parameters: ' + JSON.stringify(data) + ' Result: ' + JSON.stringify(result));
