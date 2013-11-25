@@ -35,7 +35,7 @@ webCmis.repository.SessionParameters = (function (assert, logger) {
         };
 
         this.getRootFolderUrl = function() {
-            return pRootFolderUrl;
+            return pServerUrl + '/' + pRepositoryId + '/root';
         };
 
         this.setRootFolderUrl = function(rootFolderUrl) {

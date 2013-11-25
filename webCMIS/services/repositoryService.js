@@ -74,7 +74,7 @@ webCmis.services.RepositoryService = (function (log, assert, request) {
         var data = {
             cmisSelector: 'typeChildren',
             typeId: typeId,
-            includePropertyDefinition: includePropertyDefinitions,
+            includePropertyDefinitions: includePropertyDefinitions,
             maxItems: maxItems,
             skipCount: skipCount,
             token: token

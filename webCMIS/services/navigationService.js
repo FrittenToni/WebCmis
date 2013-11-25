@@ -15,27 +15,29 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {number} [skipCount]
      * @param {string} [filter]
      * @param {boolean} [includeAllowableActions]
-     * @param {boolean} [includeRelationships]
+     * @param {string} [includeRelationships]
      * @param {string} [renditionFilter]
      * @param {string} [orderBy]
      * @param {boolean} [includePathSegment]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getChildren = function (objectId, maxItems, skipCount, filter, includeAllowableActions, includeRelationships, renditionFilter, orderBy, includePathSegment, succinct, doneCb, failCb) {
-        assert.assertString(objectId);
-        assert.assertNumberOptional(maxItems);
-        assert.assertNumberOptional(skipCount);
-        assert.assertStringOptional(filter);
-        assert.assertBooleanOptional(includeAllowableActions);
-        assert.assertBooleanOptional(includeRelationships);
-        assert.assertStringOptional(renditionFilter);
-        assert.assertStringOptional(orderBy);
-        assert.assertBooleanOptional(includePathSegment);
-        assert.assertBooleanOptional(succinct);
-        assert.assertFunctionOptional(doneCb);
-        assert.assertFunctionOptional(failCb);
+    NavigationService.prototype.getChildren = function (objectId, maxItems, skipCount, filter, includeAllowableActions, includeRelationships, renditionFilter, orderBy, includePathSegment, succinct, token, doneCb, failCb) {
+        assert.assertString(objectId, 'objectId');
+        assert.assertNumberOptional(maxItems, 'maxItems');
+        assert.assertNumberOptional(skipCount, 'skipCount');
+        assert.assertStringOptional(filter, 'filter');
+        assert.assertBooleanOptional(includeAllowableActions, 'includeAllowableActions');
+        assert.assertStringOptional(includeRelationships, 'includeRelationships');
+        assert.assertStringOptional(renditionFilter, 'renditionFilter');
+        assert.assertStringOptional(orderBy, 'orderBy');
+        assert.assertBooleanOptional(includePathSegment, 'includePathSegment');
+        assert.assertBooleanOptional(succinct, 'succinct');
+        assert.assertStringOptional(token, 'token');
+        assert.assertFunctionOptional(doneCb, 'doneCb');
+        assert.assertFunctionOptional(failCb, 'failCb');
 
         var data = {
             cmisSelector: "children",
@@ -45,11 +47,12 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             filter: filter,
             includeAllowableActions: includeAllowableActions,
             // TODO: y does this parameter not work?
-            //includeRelationships: includeRelationships,
+            includeRelationships: includeRelationships,
             renditionFilter: renditionFilter,
             orderBy: orderBy,
             includePathSegment: includePathSegment,
-            succinct: succinct
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getChildren called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));
@@ -61,22 +64,24 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {string} [filter]
      * @param {number} [depth]
      * @param {boolean} [includeAllowableActions]
-     * @param {boolean} [includeRelationships]
+     * @param {string} [includeRelationships]
      * @param {string} [renditionFilter]
      * @param {boolean} [includePathSegment]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getDescendants = function (objectId, filter, depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb) {
+    NavigationService.prototype.getDescendants = function (objectId, filter, depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, token, doneCb, failCb) {
         assert.assertString(objectId);
         assert.assertStringOptional(filter);
         assert.assertNumberOptional(depth);
         assert.assertBooleanOptional(includeAllowableActions);
-        assert.assertBooleanOptional(includeRelationships);
+        assert.assertStringOptional(includeRelationships);
         assert.assertStringOptional(renditionFilter);
         assert.assertBooleanOptional(includePathSegment);
         assert.assertBooleanOptional(succinct);
+        assert.assertStringOptional(token, 'token');
         assert.assertFunctionOptional(doneCb);
         assert.assertFunctionOptional(failCb);
 
@@ -86,11 +91,11 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             filter: filter,
             depth: depth,
             includeAllowableActions: includeAllowableActions,
-            // TODO: y does this parameter not work?
-            //includeRelationships: includeRelationships,
+            includeRelationships: includeRelationships,
             renditionFilter: renditionFilter,
             includePathSegment: includePathSegment,
-            succinct: succinct
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getDescendants called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));
@@ -102,22 +107,24 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {string} [filter]
      * @param {number} [depth]
      * @param {boolean} [includeAllowableActions]
-     * @param {boolean} [includeRelationships]
+     * @param {string} [includeRelationships]
      * @param {string} [renditionFilter]
      * @param {boolean} [includePathSegment]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getFolderTree = function (objectId, filter, depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb) {
+    NavigationService.prototype.getFolderTree = function (objectId, filter, depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, token, doneCb, failCb) {
         assert.assertString(objectId);
         assert.assertStringOptional(filter);
         assert.assertNumberOptional(depth);
         assert.assertBooleanOptional(includeAllowableActions);
-        assert.assertBooleanOptional(includeRelationships);
+        assert.assertStringOptional(includeRelationships);
         assert.assertStringOptional(renditionFilter);
         assert.assertBooleanOptional(includePathSegment);
         assert.assertBooleanOptional(succinct);
+        assert.assertStringOptional(token, 'token');
         assert.assertFunctionOptional(doneCb);
         assert.assertFunctionOptional(failCb);
 
@@ -127,11 +134,11 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             filter: filter,
             depth: depth,
             includeAllowableActions: includeAllowableActions,
-            // TODO: y this parameter does not work?
-            //includeRelationships: includeRelationships,
+            includeRelationships: includeRelationships,
             renditionFilter: renditionFilter,
             includePathSegment: includePathSegment,
-            succinct: succinct
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getFolderTree called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));
@@ -142,13 +149,15 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {string} objectId
      * @param {string} [filter]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getFolderParent = function (rootFolderUrl, objectId, filter, succinct, doneCb, failCb) {
+    NavigationService.prototype.getFolderParent = function (objectId, filter, succinct, token, doneCb, failCb) {
         assert.assertString(objectId);
         assert.assertStringOptional(filter);
         assert.assertBooleanOptional(succinct);
+        assert.assertStringOptional(token, 'token');
         assert.assertFunctionOptional(doneCb);
         assert.assertFunctionOptional(failCb);
 
@@ -156,7 +165,8 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             cmisSelector: "parent",
             objectId: objectId,
             filter: filter,
-            succinct: succinct
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getFolderParent called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));
@@ -167,21 +177,23 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {string} objectId
      * @param {string} [filter]
      * @param {boolean} [includeAllowableActions]
-     * @param {boolean} [includeRelationships]
+     * @param {string} [includeRelationships]
      * @param {string} [renditionFilter]
      * @param {boolean} [includePathSegment]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getObjectParents = function (objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb) {
+    NavigationService.prototype.getObjectParents = function (objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, token, doneCb, failCb) {
         assert.assertString(objectId);
         assert.assertStringOptional(filter);
         assert.assertBooleanOptional(includeAllowableActions);
-        assert.assertBooleanOptional(includeRelationships);
+        assert.assertStringOptional(includeRelationships);
         assert.assertStringOptional(renditionFilter);
         assert.assertBooleanOptional(includePathSegment);
         assert.assertBooleanOptional(succinct);
+        assert.assertStringOptional(token, 'token');
         assert.assertFunctionOptional(doneCb);
         assert.assertFunctionOptional(failCb);
 
@@ -190,11 +202,11 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             objectId: objectId,
             filter: filter,
             includeAllowableActions: includeAllowableActions,
-            // TODO: y this parameter does not work?
-            //includeRelationships: includeRelationships,
+            includeRelationships: includeRelationships,
             renditionFilter: renditionFilter,
             includePathSegment: includePathSegment,
-            succinct: succinct
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getObjectParents called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));
@@ -207,13 +219,15 @@ webCmis.services.NavigationService = (function (log, assert, request) {
      * @param {number} [maxItems]
      * @param {number} [skipCount]
      * @param {boolean} [includeAllowableActions]
-     * @param {boolean} [includeRelationships]
+     * @param {string} [includeRelationships]
      * @param {string} [renditionFilter]
      * @param {boolean} [succinct]
+     * @param {string} [token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
-    NavigationService.prototype.getCheckedOutDocs = function (objectId, filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, doneCb, failCb) {
+    NavigationService.prototype.getCheckedOutDocs = function (objectId, filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token, doneCb, failCb) {
+        assert.assertStringOptional(token, 'token');
         var data = {
             cmisSelector: "checkedOut",
             objectId: objectId,
@@ -223,9 +237,9 @@ webCmis.services.NavigationService = (function (log, assert, request) {
             orderBy: orderBy,
             renditionFilter: renditionFilter,
             includeAllowableActions: includeAllowableActions,
-            // TODO: y this parameter does not work?
-            //includeRelationships: includeRelationships,
-            succinct: succinct
+            includeRelationships: includeRelationships,
+            succinct: succinct,
+            token: token
         };
         request.ajaxCall(this.getSessionParameters().getRootFolderUrl(), 'GET', data, doneCb, failCb);
         log.debug("navigationService: getCheckedOutDocs called with rootFolderUrl: " + this.getSessionParameters().getRootFolderUrl() + ' and data: ' + JSON.stringify(data));

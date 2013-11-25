@@ -2,7 +2,6 @@ webCmis.init = function (debugMode) {
     if (debugMode) {
         webCmis.util.logger.setLogLevel(log4javascript.Level.DEBUG);
     }
-    // alfresco cmis: http://cmis.alfresco.com/cmisbrowser bb212ecb-122d-47ea-b5c1-128affb9cd8f
     var sessionParameters = new webCmis.repository.SessionParameters("http://localhost:8080/cmis/browser", "A1"),
         connection = webCmis.repository.repositoryConnectionFactory.createRepositoryConnection(sessionParameters);
 
@@ -48,7 +47,6 @@ webCmis.init = function (debugMode) {
         orderable: false
     });
     propertyDefintions.push(myPropertyDefinition);
-    console.log(myPropertyDefinition);
 
     var mySecondPropertyDefinition = new webCmis.models.CmisPropertyDefinition({
         id: "my:secondTestProperty",
@@ -67,7 +65,6 @@ webCmis.init = function (debugMode) {
         orderable: false
     });
     propertyDefintions.push(mySecondPropertyDefinition);
-    console.log(mySecondPropertyDefinition);
 
     var myType = new webCmis.models.CmisTypeDefinition({
         id: "my:ownType",
@@ -89,23 +86,73 @@ webCmis.init = function (debugMode) {
 
     connection.createType({cmisTypeDefinition: myType}, doneCallback, failCallback);
 
-
 //  not supported by inMemory Repository
 //  myType.displayName = "myEdited type";
 //  connection.updateType({cmisTypeDefinition: myType}, doneCallback, failCallback);
 
-//    connection.deleteType({typeId: "my:ownType"}, doneCallback, failCallback);
+    connection.deleteType({typeId: "my:ownType"}, doneCallback, failCallback);
 
-    console.log(myType);
+    // Navigation Services
+    connection.getChildren({
+        objectId: '101',
+        maxItems: 100,
+        filter: "cmis:name",
+        includeAllowableActions: true,
+        includeRelationships: "none",
+        renditionFilter: undefined,
+        orderBy: undefined,
+        includePathSegment: false,
+        succinct: false
+    }, doneCallback, failCallback);
+
+    connection.getDescendants({
+        objectId: '101',
+        filter: "cmis:name",
+        depth: 2,
+        includeAllowableActions: true,
+        includeRelationships: "none",
+        renditionFilter: undefined,
+        includePathSegment: false,
+        succinct: false
+    },doneCallback, failCallback);
+
+    // it seems that this method is not supported by the inmemory repository
+    connection.getFolderTree({
+        objectId: '101',
+        filter: "cmis:name",
+        depth: 2,
+        includeAllowableActions: true,
+        includeRelationships: "none",
+        renditionFilter: undefined,
+        includePathSegment: false,
+        succinct: false
+    },doneCallback, failCallback);
+
+    connection.getFolderParent({
+        objectId: '101',
+        filter: "cmis:name",
+        succinct: false
+    },doneCallback, failCallback);
+
+    connection.getObjectParents({
+        objectId: '101',
+        filter: "cmis:name",
+        includeAllowableActions: true,
+        includeRelationships: "none",
+        renditionFilter: undefined,
+        includePathSegment: false,
+        succinct: false
+    },doneCallback, failCallback);
+
+    connection.getCheckedOutDocs({
+        objectId: '101',
+        filter: "cmis:name",
+        maxItems: 100,
+        skipCount: 0,
+        includeAllowableActions: true,
+        includeRelationships: "none",
+        renditionFilter: undefined,
+        includePathSegment: false,
+        succinct: false
+    },doneCallback, failCallback);
 };
-
-//**
-//    connection.getChildren("workspace://SpacesStore/67f87d00-a2cd-4668-9644-d7a130435045", 200, 0, myFilter, true, true, undefined, undefined, true, false, doneCallback, failCallback);
-//    connection.getDescendants("workspace://SpacesStore/67f87d00-a2cd-4668-9644-d7a130435045", myFilter, 1, true, true, undefined, true, false, doneCallback, failCallback);
-//    // TODO: is not supported by alfresco repository - check again with another!
-//    // connection.getFolderTree("workspace://SpacesStore/67f87d00-a2cd-4668-9644-d7a130435045", myFilter, 1, true, true, undefined, true, false, doneCallback, failCallback);
-//    // TODO: Use folder that has a parent and test again
-//    // connection.getFolderParent("workspace://SpacesStore/67f87d00-a2cd-4668-9644-d7a130435045", myFilter, false, doneCallback, failCallback);
-//    connection.getCheckedOutDocs("workspace://SpacesStore/67f87d00-a2cd-4668-9644-d7a130435045", myFilter, 200, 0, undefined, undefined, true, true, false, doneCallback, failCallback);
-
-//};

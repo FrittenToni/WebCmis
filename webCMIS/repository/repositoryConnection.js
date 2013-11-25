@@ -1,4 +1,4 @@
-webCmis.repository.RepositoryConnection = (function (assert, log) {
+webCmis.repository.RepositoryConnection = (function (assert, log, defaults) {
     /**
      *
      * @param {SessionParameters} sessionParamters
@@ -39,7 +39,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getRepositories = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().getRepositories(params.token, doneCb, failCb);
     };
     /**
@@ -49,7 +49,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getRepositoryInfo = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().getRepositoryInfo(params.token, doneCb, failCb);
     };
     /**
@@ -63,10 +63,11 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeChildren = function (params, doneCb, failCb) {
-        assert.assertObject(params);
-        var maxItems = params.maxItems || this.getOperationContext().getMaxItems();
-        // TODO: defaults for includePropertyDefinitions and skipCount
-        this.getRepositoryService().getTypeChildren(params.typeId, params.includePropertyDefinitions, maxItems, params.skipCount, params.token, doneCb, failCb);
+        assert.assertObject(params, 'params');
+        var maxItems = params.maxItems || this.getOperationContext().getMaxItems(),
+            skipCount = params.skipCount || defaults.skipCount;
+        // TODO: enum for includePropertyDefinitions
+        this.getRepositoryService().getTypeChildren(params.typeId, params.includePropertyDefinitions, maxItems, skipCount, params.token, doneCb, failCb);
     };
     /**
      *
@@ -79,8 +80,8 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeDescendants = function (params, doneCb, failCb) {
-        assert.assertObject(params);
-        // TODO: defaults for includePropertyDefinitions and depth
+        assert.assertObject(params, 'params');
+        // TODO: enum for includePropertyDefinitions and depth
         this.getRepositoryService().getTypeDescendants(params.typeId, params.depth, params.includePropertyDefinitions, params.token, doneCb, failCb);
     };
     /**
@@ -92,7 +93,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getTypeDefinition = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().getTypeDefinition(params.typeId, params.token, doneCb, failCb);
     };
     /**
@@ -104,7 +105,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.createType = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().createType(params.cmisTypeDefinition, params.token, doneCb, failCb);
     };
     /**
@@ -116,7 +117,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.updateType = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().updateType(params.cmisTypeDefinition, params.token, doneCb, failCb);
     };
     /**
@@ -128,21 +129,32 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.deleteType = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         this.getRepositoryService().deleteType(params.typeId, params.token, doneCb, failCb);
     };
 
     /** NAVIGATION SERVICES **/
 
     /**
-     *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {number} [params.maxItems]
+     * @param {number} [params.skipCount]
+     * @param {string} [params.filter]
+     * @param {boolean} [params.includeAllowableActions]
+     * @param {boolean} [params.includeRelationships]
+     * @param {string} [params.renditionFilter]
+     * @param {string} [params.orderBy]
+     * @param {boolean} [params.includePathSegment]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getChildren = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var maxItems = params.maxItems || this.getOperationContext().getMaxItems(),
+            skipCount = params.skipCount || defaults.skipCount,
             filter = params.filter || this.getOperationContext().getPropertyFilter(),
             includeAllowableActions = params.includeAllowableActions || this.getOperationContext().getIncludeAllowableActions(),
             includeRelationships = params.includeRelationships || this.getOperationContext().getIncludeRelationships(),
@@ -151,16 +163,25 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
             includePathSegment = params.includePathSegment || this.getOperationContext().getIncludePathSegment(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getChildren(params.objectId, maxItems, params.skipCount, filter, includeAllowableActions, includeRelationships, renditionFilter, orderBy, includePathSegment, succinct, doneCb, failCb);
+        this.getNavigationService().getChildren(params.objectId, maxItems, skipCount, filter, includeAllowableActions, includeRelationships, renditionFilter, orderBy, includePathSegment, succinct, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {string} [params.filter]
+     * @param {number} [params.depth]
+     * @param {boolean} [params.includeAllowableActions]
+     * @param {string} [params.includeRelationships]
+     * @param {string} [params.renditionFilter]
+     * @param {boolean} [params.includePathSegment]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getDescendants = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var filter = params.filter || this.getOperationContext().getPropertyFilter(),
             includeAllowableActions = params.includeAllowableActions || this.getOperationContext().getIncludeAllowableActions(),
             includeRelationships = params.includeRelationships || this.getOperationContext().getIncludeRelationships(),
@@ -168,16 +189,25 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
             includePathSegment = params.includePathSegment || this.getOperationContext().getIncludePathSegment(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getDescendants(params.objectId, filter, params.depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb);
+        this.getNavigationService().getDescendants(params.objectId, filter, params.depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {string} [params.filter]
+     * @param {number} [params.depth]
+     * @param {boolean} [params.includeAllowableActions]
+     * @param {string} [params.includeRelationships]
+     * @param {string} [params.renditionFilter]
+     * @param {boolean} [params.includePathSegment]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getFolderTree = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var filter = params.filter || this.getOperationContext().getPropertyFilter(),
             includeAllowableActions = params.includeAllowableActions || this.getOperationContext().getIncludeAllowableActions(),
             includeRelationships = params.includeRelationships || this.getOperationContext().getIncludeRelationships(),
@@ -185,29 +215,41 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
             includePathSegment = params.includePathSegment || this.getOperationContext().getIncludePathSegment(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getFolderTree(params.objectId, filter, params.depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb);
+        this.getNavigationService().getFolderTree(params.objectId, filter, params.depth, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {string} [params.filter]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getFolderParent = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var filter = params.filter || this.getOperationContext().getPropertyFilter(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getFolderParent(params.objectId, filter, succinct, doneCb, failCb);
+        this.getNavigationService().getFolderParent(params.objectId, filter, succinct, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {string} [params.filter]
+     * @param {boolean} [params.includeAllowableActions]
+     * @param {string} [params.includeRelationships]
+     * @param {string} [params.renditionFilter]
+     * @param {boolean} [params.includePathSegment]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getObjectParents = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var filter = params.filter || this.getOperationContext().getPropertyFilter(),
             includeAllowableActions = params.includeAllowableActions || this.getOperationContext().getIncludeAllowableActions(),
             includeRelationships = params.includeRelationships || this.getOperationContext().getIncludeRelationships(),
@@ -215,16 +257,25 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
             includePathSegment = params.includePathSegment || this.getOperationContext().getIncludePathSegment(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getObjectParents(params.objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, doneCb, failCb);
+        this.getNavigationService().getObjectParents(params.objectId, filter, includeAllowableActions, includeRelationships, renditionFilter, includePathSegment, succinct, params.token, doneCb, failCb);
     };
     /**
      *
      * @param {object} params
+     * @param {string} params.objectId
+     * @param {string} [params.filter]
+     * @param {number} [params.maxItems]
+     * @param {number} [params.skipCount]
+     * @param {boolean} [params.includeAllowableActions]
+     * @param {string} [params.includeRelationships]
+     * @param {string} [params.renditionFilter]
+     * @param {boolean} [params.succinct]
+     * @param {string} [params.token]
      * @param {function} [doneCb]
      * @param {function} [failCb]
      */
     RepositoryConnection.prototype.getCheckedOutDocs = function (params, doneCb, failCb) {
-        assert.assertObject(params);
+        assert.assertObject(params, 'params');
         var maxItems = params.maxItems || this.getOperationContext().getMaxItems(),
             filter = params.filter || this.getOperationContext().getPropertyFilter(),
             includeAllowableActions = params.includeAllowableActions || this.getOperationContext().getIncludeAllowableActions(),
@@ -233,7 +284,7 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
             orderBy = params.orderBy || this.getOperationContext().getOrderBy(),
             succinct = params.succinct || this.getOperationContext().getSuccinct();
 
-        this.getNavigationService().getCheckedOutDocs(objectId, filter, maxItems, params.skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, doneCb, failCb);
+        this.getNavigationService().getCheckedOutDocs(params.objectId, filter, maxItems, params.skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, params.token, doneCb, failCb);
     };
 //
 //    /** OBJECT SERVICES **/
@@ -261,4 +312,4 @@ webCmis.repository.RepositoryConnection = (function (assert, log) {
 //
     return RepositoryConnection;
 
-}(webCmis.util.assert, webCmis.util.logger.getLogger()));
+}(webCmis.util.assert, webCmis.util.logger.getLogger(), webCmis.util.parameterDefaults));

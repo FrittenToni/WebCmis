@@ -6,7 +6,7 @@ webCmis.util.OperationContext = (function (assert, logger) {
             pIncludeAcls = false,
             pIncludeAllowableActions = true,
             pIncludePolicies = false,
-            pIncludeRelationships = false,
+            pIncludeRelationships = 'none',
             pRenditionFilter,
             pIncludePathSegment = true,
             pOrderBy,
